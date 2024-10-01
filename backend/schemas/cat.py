@@ -13,7 +13,6 @@ from core.constants import (
     EXAMPLE_CAT_PREV_URL,
     EXAMPLE_CAT_SEX,
 )
-
 from core.enums import CatColor, CatSex
 from schemas.breed import BreedDB
 

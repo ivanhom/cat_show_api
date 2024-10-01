@@ -29,10 +29,12 @@ class CRUDCat(CRUDBase):
         query = select(Cat)
 
         if search is not None:
-            query = query.join(Breed).where(or_(
-                Cat.name.ilike(f'%{search}%'),
-                Breed.name.ilike(f'%{search}%')
-            ))
+            query = query.join(Breed).where(
+                or_(
+                    Cat.name.ilike(f'%{search}%'),
+                    Breed.name.ilike(f'%{search}%'),
+                )
+            )
         if breed_id is not None:
             query = query.where(Cat.breed_id == breed_id)
         if sex:

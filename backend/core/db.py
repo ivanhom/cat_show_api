@@ -3,7 +3,11 @@ from typing import AsyncGenerator
 from sqlalchemy import String, Text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import (
-    declarative_base, declared_attr, Mapped, mapped_column, sessionmaker
+    Mapped,
+    declarative_base,
+    declared_attr,
+    mapped_column,
+    sessionmaker,
 )
 
 from core.config import settings
