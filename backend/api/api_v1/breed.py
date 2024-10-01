@@ -1,11 +1,20 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.pagination import get_next_and_previous_urls
 from api.validators import check_breed_exist, check_breed_name_duplicate
+from core.constants import (
+    BREED_SEARCH_DESCR,
+    BREED_API_URL,
+    PAGE_NUMBER_DESCR,
+    QUERY_LIMIT,
+    QUERY_LIMIT_DESCR,
+    QUERY_PAGE,
+)
 from core.db import get_async_session
 from crud.breed import breed_crud
 from models import Breed
-from schemas.breed import BreedCreate, BreedDB, BreedUpdate
+from schemas.breed import BreedCreate, BreedDB, BreedList, BreedUpdate
 
 router = APIRouter(tags=['Породы'])
 
@@ -21,12 +30,33 @@ async def create_breed(
     return await breed_crud.create(obj_in=data_in, session=session)
 
 
-@router.get('/', response_model=list[BreedDB])
+@router.get('/', response_model=BreedList)
 async def get_breeds(
         session: AsyncSession = Depends(get_async_session),
-) -> list[Breed]:
+        search: str | None = Query(
+            default=None, description=BREED_SEARCH_DESCR
+        ),
+        limit: int = Query(
+            gt=0, default=QUERY_LIMIT, description=QUERY_LIMIT_DESCR
+        ),
+        page: int = Query(
+            gt=0, default=QUERY_PAGE, description=PAGE_NUMBER_DESCR
+        ),
+) -> dict[str, int | str | list]:
     """Получение списка пород."""
-    return await breed_crud.get_multi(session=session)
+    breeds_list, total_count = await breed_crud.get_breeds_list(
+        session, search, limit, page
+    )
+    next_url, prev_url = get_next_and_previous_urls(
+        BREED_API_URL, total_count, limit, page, search=search
+    )
+
+    return {
+        'count': total_count,
+        'next': next_url,
+        'previous': prev_url,
+        'results': breeds_list,
+    }
 
 
 @router.get('/{id}/', response_model=BreedDB)

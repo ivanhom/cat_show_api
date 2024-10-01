@@ -1,9 +1,12 @@
 from pydantic import BaseModel, Field
 
 from core.constants import (
+    EXAMPLE_BREED_COUNT,
     EXAMPLE_BREED_DESCR,
     EXAMPLE_BREED_ID,
     EXAMPLE_BREED_NAME,
+    EXAMPLE_BREED_NEXT_URL,
+    EXAMPLE_BREED_PREV_URL,
 )
 
 
@@ -32,3 +35,12 @@ class BreedDB(BreedCreate):
 
     class Config:
         from_attributes = True
+
+
+class BreedList(BaseModel):
+    """Схема для отображения модели Breed с пагинацией."""
+
+    count: int = Field(example=EXAMPLE_BREED_COUNT)
+    next: str | None = Field(example=EXAMPLE_BREED_NEXT_URL)
+    previous: str | None = Field(example=EXAMPLE_BREED_PREV_URL)
+    results: list[BreedDB]

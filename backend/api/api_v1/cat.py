@@ -1,11 +1,22 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.pagination import get_next_and_previous_urls
 from api.validators import check_cat_exist
+from core.constants import (
+    CAT_BREED_SEARCH_DESCR,
+    CAT_SEARCH_DESCR,
+    CAT_API_URL,
+    PAGE_NUMBER_DESCR,
+    QUERY_LIMIT,
+    QUERY_LIMIT_DESCR,
+    QUERY_PAGE,
+)
 from core.db import get_async_session
+from core.enums import CatColor, CatSex
 from crud.cat import cat_crud
 from models import Cat
-from schemas.cat import CatCreate, CatDB, CatUpdate
+from schemas.cat import CatCreate, CatDB, CatList, CatUpdate
 
 router = APIRouter(tags=['Котята'])
 
@@ -20,12 +31,44 @@ async def create_cat(
     return await cat_crud.create(obj_in=data_in, session=session)
 
 
-@router.get('/', response_model=list[CatDB])
+@router.get('/', response_model=CatList)
 async def get_cats(
         session: AsyncSession = Depends(get_async_session),
-) -> list[Cat]:
+        search: str | None = Query(
+            default=None, description=CAT_SEARCH_DESCR
+        ),
+        breed_id: int | None = Query(
+            ge=0, default=None, description=CAT_BREED_SEARCH_DESCR
+        ),
+        sex: list[CatSex] = Query(default=[], description='USER_ROLE_DESCR'),
+        color: list[CatColor] = Query(default=[], description='USER_ROLE_DESCR'),
+        limit: int = Query(
+            gt=0, default=QUERY_LIMIT, description=QUERY_LIMIT_DESCR
+        ),
+        page: int = Query(
+            gt=0, default=QUERY_PAGE, description=PAGE_NUMBER_DESCR
+        ),
+) -> dict[str, int | str | list]:
     """Получение списка котят."""
-    return await cat_crud.get_multi(session=session)
+    cats_list, total_count = await cat_crud.get_cats_list(
+        session, search, breed_id, sex, color, limit, page
+    )
+    next_url, prev_url = get_next_and_previous_urls(
+        CAT_API_URL,
+        total_count,
+        limit, page,
+        search=search,
+        breed_id=breed_id,
+        sex=sex,
+        color=color,
+    )
+
+    return {
+        'count': total_count,
+        'next': next_url,
+        'previous': prev_url,
+        'results': cats_list,
+    }
 
 
 @router.get('/{id}/', response_model=CatDB)

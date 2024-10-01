@@ -6,8 +6,11 @@ from core.constants import (
     EXAMPLE_BREED_ID,
     EXAMPLE_CAT_AGE,
     EXAMPLE_CAT_COLOR,
+    EXAMPLE_CAT_COUNT,
     EXAMPLE_CAT_DESCR,
     EXAMPLE_CAT_NAME,
+    EXAMPLE_CAT_NEXT_URL,
+    EXAMPLE_CAT_PREV_URL,
     EXAMPLE_CAT_SEX,
 )
 
@@ -54,3 +57,12 @@ class CatDB(CatCreate):
 
     class Config:
         from_attributes = True
+
+
+class CatList(BaseModel):
+    """Схема для отображения модели Cat с пагинацией."""
+
+    count: int = Field(example=EXAMPLE_CAT_COUNT)
+    next: str | None = Field(example=EXAMPLE_CAT_NEXT_URL)
+    previous: str | None = Field(example=EXAMPLE_CAT_PREV_URL)
+    results: list[CatDB]
