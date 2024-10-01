@@ -34,8 +34,6 @@ async def get_breed(
         id: int, session: AsyncSession = Depends(get_async_session),
 ) -> Breed:
     """Получение определенной породы."""
-    hh = await check_breed_exist(breed_id=id, session=session)
-    print(hh)
     return await check_breed_exist(breed_id=id, session=session)
 
 

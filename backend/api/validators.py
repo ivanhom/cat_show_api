@@ -4,9 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.constants import (
     ERROR_BREED_EXISTS,
     ERROR_BREED_DOESNT_EXIST,
+    ERROR_CAT_DOESNT_EXIST,
 )
 from crud.breed import breed_crud
-from models import Breed
+from crud.cat import cat_crud
+from models import Breed, Cat
 
 
 async def check_breed_name_duplicate(
@@ -33,3 +35,16 @@ async def check_breed_exist(breed_id: int, session: AsyncSession) -> Breed:
             detail=ERROR_BREED_DOESNT_EXIST
         )
     return breed
+
+
+async def check_cat_exist(cat_id: int, session: AsyncSession) -> Cat:
+    """Проверяет, что котёнок уже есть в БД и возвращает его."""
+    cat = await cat_crud.get_by_attribute(
+        attr_name='id', attr_value=cat_id, session=session
+    )
+    if not cat:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_CAT_DOESNT_EXIST
+        )
+    return cat
