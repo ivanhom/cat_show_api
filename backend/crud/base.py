@@ -48,6 +48,26 @@ class CRUDBase:
         await session.refresh(db_obj)
         return db_obj
 
+    async def create_multi(
+        self,
+        obj_in_list: list[BaseModel],
+        session: AsyncSession,
+    ):
+        """Создание списка объектов модели."""
+        db_obj_list = []
+
+        for obj_in in obj_in_list:
+            obj_in_data = obj_in.dict()
+            db_obj = self.model(**obj_in_data)
+            db_obj_list.append(db_obj)
+            session.add(db_obj)
+        await session.commit()
+
+        for obj in db_obj_list:
+            await session.refresh(obj)
+
+        return db_obj_list
+
     async def update(
         self,
         db_obj,

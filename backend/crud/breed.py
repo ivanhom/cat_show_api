@@ -13,9 +13,9 @@ class CRUDBreed(CRUDBase):
     async def get_breeds_list(
         self,
         session: AsyncSession,
-        search: str | None,
-        limit: int,
-        page: int,
+        search: str | None = None,
+        limit: int = 10,
+        page: int = 1,
     ) -> tuple[list[Breed], int]:
         """Получает из базы данных список пород по запрашиваемым параметрам
         в соответствии с пагинацией, а также общее количество пород,
