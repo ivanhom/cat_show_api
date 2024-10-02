@@ -52,7 +52,6 @@ class CatDB(CatCreate):
 
     id: int
     breed: BreedDB | None
-    breed_id: int | None = Field(exclude=True)
 
     class Config:
         from_attributes = True

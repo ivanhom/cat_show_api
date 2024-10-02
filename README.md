@@ -9,7 +9,7 @@ API для администратора онлайн выставки котят
 	• PostgreSQL 15
 	• SQLAlchemy 2
     • Alembic 1.13
-    • Pytest
+    • Pytest 8.3
 	• Docker, docker-compose
 
 ## 1. Настройка
@@ -144,6 +144,10 @@ wb_bears
 │   ├── start_data/                     # Подготовленные данные для БД
 │   │   ├── breeds_data.csv             # Данные для пород
 │   │   └── cats_data.csv               # Данные для котят
+│   ├── tests/                          # Тесты для API приложения
+│   │   ├── conftest.py                 # Фикстуры для pytest
+│   │   ├── test_breeds.py              # Тесты для API эндпоинтов breeds
+│   │   └── test_cats.py                # Тесты для API эндпоинтов cats
 │   ├── .dockerignore                   # Файл игнорирования Docker
 │   ├── .pre-commit-config.yaml         # Конфигурация для pre-commit hooks
 │   ├── alembic.ini                     # Файл конфигурации для Alembic
