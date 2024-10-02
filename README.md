@@ -126,7 +126,8 @@ wb_bears
 │   │   ├── config.py                   # Конфигурационные параметры приложения
 │   │   ├── constants.py                # Константы для приложения
 │   │   ├── db.py                       # Базовая модель для SQLAlchemy
-│   │   └── enums.py                    # Enum модели
+│   │   ├── enums.py                    # Enum модели
+│   │   └── init_db.py                  # Первичное заполнение БД подготовленными данными
 │   ├── crud/                           
 │   │   ├── __init__.py                 
 │   │   ├── base.py                     # Базовые CRUD операции для СУБД
@@ -140,6 +141,9 @@ wb_bears
 │   │   ├── __init__.py                 
 │   │   ├── breed.py                    # Схемы для модели Breed 
 │   │   └── cat.py                      # Схемы для модели Cat 
+│   ├── start_data/                     # Подготовленные данные для БД
+│   │   ├── breeds_data.csv             # Данные для пород
+│   │   └── cats_data.csv               # Данные для котят
 │   ├── .dockerignore                   # Файл игнорирования Docker
 │   ├── .pre-commit-config.yaml         # Конфигурация для pre-commit hooks
 │   ├── alembic.ini                     # Файл конфигурации для Alembic
@@ -185,3 +189,4 @@ wb_bears
 2. Запустить `docker-compose up -d --build`.
 3. Сервер будет доступен по адресу `http://localhost:8000`
 4. Документация Swagger будет доступен по адресу `http://localhost:8000/docs`
+5. При первом запуске в базу данных будут автоматически записаны начальные данные
